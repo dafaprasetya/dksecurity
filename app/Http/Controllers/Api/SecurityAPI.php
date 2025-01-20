@@ -12,25 +12,22 @@ use InvalidArgumentException;
 class SecurityAPI extends Controller
 {
     public function checkRadius($asallat, $asallong, $tujuanlat, $tujuanlong) {
-        $radius = 30; // Radius dalam meter
-    
-        // Konversi derajat ke radian
+        $radius = 30; 
+        
         $asallat = deg2rad($asallat);
         $asallong = deg2rad($asallong);
         $tujuanlat = deg2rad($tujuanlat);
         $tujuanlong = deg2rad($tujuanlong);
-
-        // Hitung perbedaan koordinat
+        
         $dlat = $tujuanlat - $asallat;
         $dlon = $tujuanlong - $asallong;
 
         // Rumus Haversine
         $a = sin($dlat / 2) * sin($dlat / 2) + cos($asallat) * cos($tujuanlat) * sin($dlon / 2) * sin($dlon / 2);
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        $radius_of_earth = 6371000; // Radius bumi dalam meter
-        $distance = $radius_of_earth * $c; // Jarak dalam meter
+        $radius_of_earth = 6371000;
+        $distance = $radius_of_earth * $c;
 
-        // Tentukan keterangan berdasarkan jarak
         $keterangan = ($distance > $radius) ? "lebih dari {$radius}m" : "dalam radius {$radius}m";
 
         return [
