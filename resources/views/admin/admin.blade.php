@@ -24,7 +24,7 @@
                         <tbody>
                             @foreach($security as $security)
                                 <tr>
-                                    <td>{{ $security->pointqr->nama_tempat }}</td>
+                                    <td>{{ $security->pointqr->nama_tempat }}({{ $security->pointqr->area }})</td>
                                     <td>{{ $security->waktu }}</td>
                                     <td>{{ $security->nama }}</td>
                                     <td>{{ $security->nik }}</td>
