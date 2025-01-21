@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('nik');
-            $table->timestamp('waktu')->default(now());
+            $table->timestamp('waktu')->useCurrent();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->char('kodeunik');
