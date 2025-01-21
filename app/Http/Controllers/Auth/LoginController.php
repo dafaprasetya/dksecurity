@@ -32,6 +32,10 @@ class LoginController extends Controller
      *
      * @return void
      */
+    public function username()
+    {
+        return 'nik'; // Ganti dengan nama kolom yang Anda inginkan
+    }
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
