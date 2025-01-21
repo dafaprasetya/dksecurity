@@ -103,8 +103,8 @@ class AdminController extends Controller
     }
     public function buatTitikpoint() {
         $security = Security::all();
-        $valid = Security::where('status', 'valid')->count();
-        $invalid = Security::where('status', 'invalid')->count();
+        $valid = Security::where('status', 'valid');
+        $invalid = Security::where('status', 'invalid');
         $data = [
             'security' => $security,
             'valid' => $valid,
