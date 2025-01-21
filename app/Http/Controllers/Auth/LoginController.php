@@ -34,7 +34,7 @@ class LoginController extends Controller
      */
     public function username()
     {
-        return 'nik'; // Ganti dengan nama kolom yang Anda inginkan
+        return 'nik';
     }
     public function __construct()
     {

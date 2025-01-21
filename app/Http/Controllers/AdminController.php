@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 use App\Models\Security;
+use App\Models\UserSecurity;
 use App\Models\PointQR;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+
 
 class AdminController extends Controller
 {
@@ -12,28 +15,92 @@ class AdminController extends Controller
     public function __construct()
     {
         $security = Security::all();
-        $valid = Security::where('status', 'valid')->count();
-        $invalid = Security::where('status', 'invalid')->count();
+        $valid = Security::where('status', 'valid');
+        $invalid = Security::where('status', 'invalid');
         $this->data = [
             'security' => $security,
             'valid' => $valid,
             'invalid' => $invalid,
         ];
     }
+
+    // SECURITY SCAN HANDLE
     public function index()
     {
         // $kodeunik = ::all();
-        $security = Security::all();
-        $valid = Security::where('status', 'valid')->count();
-        $invalid = Security::where('status', 'invalid')->count();
+
+        return view('admin.admin', $this->data);
+    }
+    public function validQrScan()
+    {
+        // $kodeunik = ::all();
         $data = [
-            'security' => $security,
-            'valid' => $valid,
-            'invalid' => $invalid,
+            'security' => $this->data['valid']->get(),
+            'valid' => $this->data['valid'],
+            'invalid' => $this->data['invalid'],
         ];
         return view('admin.admin', $data);
     }
+    public function invalidQrScan()
+    {
+        // $kodeunik = ::all();
+        $data = [
+            'security' => $this->data['invalid']->get(),
+            'valid' => $this->data['valid'],
+            'invalid' => $this->data['invalid'],
+        ];
+        // dd($data['invalid']);
+        return view('admin.admin', $data);
+    }
+
+
+
+
+    public function show($id)
+    {
+        $security = Security::find($id);
+        return redirect()->back()->with('success', 'Data Berhasil Dihapus');
+    }
+    public function ubahStatusScan(Request $request, $id)
+    {
+        $security = Security::find($id);
+        $security->status = $request->status;
+        $security->save();
+
+        return redirect()->back()->with('success', 'Data Berhasil Diubah');
+    }
+    public function cleanupQrScan()
+    {
+        // Hitung tanggal 3 hari yang lalu
+        $threeDaysAgo = Carbon::now()->subDays(3);
+
+        // Hapus data dengan status 'invalid' yang lebih lama dari 3 hari
+        $deletedRecords = Security::where('status', 'invalid')
+            ->where('created_at', '<', $threeDaysAgo)
+            ->delete();
+
+        return redirect()->back()->with('success', 'Data Scan QR yang Lama Telah di Hapus');
+    }
+    // END SECURITY SCAN
     // TITKPOINT
+    public function buatTitikpointpost(Request $request) {
+        $qr = new PointQR();
+
+        $validated = $request->validate([
+            'kodeunik' => 'required',
+            'nama_tempat' => 'required',
+            'area' => 'required',
+            'latitude' => 'nullable',
+            'longitude' => 'nullable',
+        ]);
+        $qr->kodeunik = $validated['kodeunik'];
+        $qr->nama_tempat = $validated['nama_tempat'];
+        $qr->area = $validated['area'];
+        $qr->latitude = $validated['latitude'];
+        $qr->longitude = $validated['longitude'];
+        $qr->save();
+        return redirect()->route('listtitikpoint');
+    }
     public function buatTitikpoint() {
         $security = Security::all();
         $valid = Security::where('status', 'valid')->count();
@@ -51,38 +118,6 @@ class AdminController extends Controller
             'titikpoint'=>$titikpoint,
         ];
         return view('admin.listqr',$this->data, $data);
-    }
-    public function buatTitikpointpost(Request $request) {
-        $qr = new PointQR();
-        
-        $validated = $request->validate([
-            'kodeunik' => 'required',
-            'nama_tempat' => 'required',
-            'area' => 'required',
-            'latitude' => 'nullable',
-            'longitude' => 'nullable',
-        ]);
-        $qr->kodeunik = $validated['kodeunik'];
-        $qr->nama_tempat = $validated['nama_tempat'];
-        $qr->area = $validated['area'];
-        $qr->latitude = $validated['latitude'];
-        $qr->longitude = $validated['longitude'];
-        $qr->save();
-        return redirect()->route('listtitikpoint');
-    }
-
-    public function show($id)
-    {
-        $security = Security::find($id);
-        return redirect()->back()->with('success', 'Data Berhasil Dihapus');
-    }
-    public function ubahStatusScan(Request $request, $id)
-    {
-        $security = Security::find($id);
-        $security->status = $request->status;
-        $security->save();
-
-        return redirect()->back()->with('success', 'Data Berhasil Diubah');
     }
     public function updateTitikpoint(Request $request, $kodeunik)
     {
@@ -107,11 +142,42 @@ class AdminController extends Controller
 
         return redirect()->route('listtitikpoint')->with('success', 'Data Berhasil Dihapus');
     }
-    public function destroy($id)
-    {
-        $security = Security::find($id);
-        $security->delete();
-
-        return response()->json($security);
+    // END TITIK POINT
+    // SECURITY USER
+    public function listSecurityUser() {
+        $usersec = UserSecurity::all();
+        $data = [
+            'usersec'=>$usersec,
+        ];
+        return view('admin.securityuser',$this->data, $data);
     }
+    public function updateSecurityUser(Request $request, $nik)
+    {
+        $usersec = UserSecurity::where('nik', $nik)->first();
+        if (!$usersec) {
+            return redirect()->route('listtitikpoint')->with('error', 'Data tidak ditemukan');
+        }
+        $usersec->update([
+            'nik' => $request->nik,
+            'nama' => $request->nama,
+            'area' => $request->area,
+        ]);
+        return redirect()->back()->with('success', 'Data Berhasil Diedit');
+    }
+    public function buatSecurityUser(Request $request) {
+        $qr = new UserSecurity();
+
+        $validated = $request->validate([
+            'nik' => 'required|unique:user_securities,nik',
+            'nama' => 'required',
+            'area' => 'required',
+        ]);
+        $qr->nik = $validated['nik'];
+        $qr->nama = $validated['nama'];
+        $qr->area = $validated['area'];
+        $qr->save();
+        return redirect()->back()->with('success', 'Data Berhasil Ditambahkan');
+    }
+
+
 }

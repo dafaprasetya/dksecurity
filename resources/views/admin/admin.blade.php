@@ -4,8 +4,31 @@
     <div class="container-fluid">
         <h1 class="h3 mb-4 text-gray-800">Data Scan QR Security</h1>
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Database Hasil Scan QR</h6>
+                <div class="modal fade" id="cleanupqrmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Yakin?</h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">Apakah anda yakin membersihkan data invalid yang sudah lebih dari 3 hari?</div>
+                            <div class="modal-footer">
+                                <form id='cleanup' action="{{ route('cleanupqrscan') }}" method="post">
+                                    @csrf
+                                    <button class="btn btn-danger">Ya</button>
+                                </form>
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#cleanupqrmodal">Bersihkan data invalid > 3hari</button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -45,7 +68,7 @@
                                             </div>
                                           </div>
                                     </td>
-                                    
+
                                 </tr>
                             @endforeach
                         </tbody>

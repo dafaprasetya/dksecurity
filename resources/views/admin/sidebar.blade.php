@@ -3,7 +3,7 @@
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center mt-3" href="index.html">
-        
+
         <div class="sidebar-brand-text mx-3">DKRIUK Security Checkpoint</div>
     </a>
     <li class="nav-item">
@@ -37,22 +37,22 @@
             <i class="fas fa-fw fa-table"></i>
             <span>Semua Data</span></a>
     </li>
-    
-    <li class="nav-item ">
-        <a class="nav-link" href="">
+
+    <li class="nav-item {{ Route::is('validqr') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('validqr') }}">
             <i class="fas fa-fw fa-table"></i>
-            <span>Valid {{ $valid }}</span></a>
+            <span>Valid {{ $valid->count() }}</span></a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="">
+    <li class="nav-item {{ Route::is('invalidqr') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('invalidqr') }}">
             <i class="fas fa-fw fa-table"></i>
-            <span> Invalid <span class=" text-danger">{{ $invalid }}</span></span></a>
+            <span> Invalid <span class=" text-danger">{{ $invalid->count() }}</span></span></a>
     </li>
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link" href="">
             <i class="fas fa-fw fa-table"></i>
             <span>Tambah Manual</span></a>
-    </li>
+    </li> --}}
     <hr class="sidebar-divider">
     <!-- Heading -->
     <div class="sidebar-heading">
@@ -60,18 +60,12 @@
     </div>
 
     <!-- Nav Item - Add -->
-    <li class="nav-item">
-        <a class="nav-link" href="">
+    <li class="nav-item {{ Route::is('listsecurityuser') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('listsecurityuser') }}">
             <i class="fas fa-fw fa-table"></i>
             <span>List Security</span></a>
     </li>
-    <!-- Nav Item - Add -->
-    <li class="nav-item">
-        <a class="nav-link" href="">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Tambah Security</span></a>
-    </li>
-    <!-- Divider -->    
+    <!-- Divider -->
     <hr class="sidebar-divider my-0">
 
     <!-- Divider -->
