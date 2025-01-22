@@ -17,10 +17,12 @@ class AdminController extends Controller
         $security = Security::all();
         $valid = Security::where('status', 'valid');
         $invalid = Security::where('status', 'invalid');
+        $usersecurity = UserSecurity::all();
         $this->data = [
             'security' => $security,
             'valid' => $valid,
             'invalid' => $invalid,
+            'usersec'=>$usersecurity,
         ];
     }
 
@@ -28,7 +30,7 @@ class AdminController extends Controller
     public function index()
     {
         // $kodeunik = ::all();
-
+        // dd($this->data['usersec']);
         return view('admin.admin', $this->data);
     }
     public function validQrScan()
@@ -52,8 +54,6 @@ class AdminController extends Controller
         // dd($data['invalid']);
         return view('admin.admin', $data);
     }
-
-
 
 
     public function show($id)

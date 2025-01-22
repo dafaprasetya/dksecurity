@@ -19,12 +19,13 @@
 
     <!-- Custom styles for this template-->
     <link href="{{asset('vendor/css/sb-admin-2.min.css')}}" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
 
     @if (session()->has('success'))
-        
+
         <style>
             #toastContainer {
                 position: fixed; /* Memastikan toast tetap di tempat */
@@ -61,7 +62,7 @@
         </script>
     @endif
     @if (session()->has('error'))
-        
+
         <style>
             #toastContainer {
                 position: fixed; /* Memastikan toast tetap di tempat */
@@ -189,6 +190,9 @@
         });
         $(document).ready(function() {
             $('#dkassetdkl').select2();
+        });
+        $(document).ready(function() {
+            $('#nikinput').select2();
         });
     </script>
     <!-- Core plugin JavaScript-->

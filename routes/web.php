@@ -18,6 +18,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin/buat/titikpoint', [App\Http\Controllers\AdminController::class, 'buatTitikpoint'])->name('buattitikpoint');
     Route::get('/admin/list/titikpoint', [App\Http\Controllers\AdminController::class, 'listTitikpoint'])->name('listtitikpoint');
     Route::post('/admin/cleanup/data/security', [App\Http\Controllers\AdminController::class, 'cleanupQrScan'])->name('cleanupqrscan');
+    Route::post('/admin/update/qrscan/{id}', [App\Http\Controllers\Api\SecurityAPI::class, 'updateQrScan'])->name('updateqrscan');
+    Route::post('/admin/delete/qrscan/{id}', [App\Http\Controllers\Api\SecurityAPI::class, 'deleteQrScan'])->name('deleteqrscan');
     // TITIKPOINT HANDLE
     Route::delete('/admin/hapus/titikpoint/{kodeunik}', [App\Http\Controllers\AdminController::class, 'hapusTitikpoint'])->name('hapustitikpoint');
     Route::post('/admin/update/titikpoint/{kodeunik}', [App\Http\Controllers\AdminController::class, 'updateTitikpoint'])->name('updatetitikpoint');

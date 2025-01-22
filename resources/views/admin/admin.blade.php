@@ -62,14 +62,83 @@
                                                 <form action="{{ route('ubahstatusscan',$security->id) }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="status" value="{{ $security->status == 'invalid' ? 'valid' : 'invalid' }}">
+                                                    @if (!str_contains($security->keterangan, 'tidak cocok'))
                                                     <button type="submit" class="dropdown-item">{{ $security->status == 'invalid' ? 'valid' : 'invalid' }}</button>
+                                                    @else
+                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editqrModal{{ $security->id }}">edit</a>
+                                                    @endif
                                                 </form>
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteqrModal{{ $security->id }}">delete</a>
+
                                               {{-- <a onclick="" class="dropdown-item" href="#">{{ $security->status == 'invalid' ? 'valid' : 'invalid' }}</a> --}}
                                             </div>
-                                          </div>
+                                        </div>
                                     </td>
-
                                 </tr>
+                                <div class="modal fade" id="deleteqrModal{{ $security->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Yakin?</h5>
+                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">Apakah anda yakin ingin menghapus item ini?</div>
+                                            <div class="modal-footer">
+                                                <form action="{{ route('deleteqrscan',$security->id) }}" method="POST">
+                                                    @csrf
+                                                    <button class="btn btn-danger" type="submit">Hapus</a>
+                                                </form>
+                                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="editqrModal{{ $security->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Edit {{ $security->pointqr->nama_tempat }}, {{ $security->nama }}</h5>
+                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="editform{{ $security->id }}" action="{{ route('updateqrscan', $security->id) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <div class="form-group">
+                                                        <label for="nik">Data Diri Security</label>
+                                                        {{-- {{ $usersec[0] }} --}}
+                                                        <div class="form-group">
+
+                                                            <select class="form-control nikinput" name="nik" id="nikinput">
+                                                                @foreach ($usersec as $usersecc)
+                                                                <option value="{{ $usersecc->nik }}">{{ $usersecc->nik }} - {{ $usersecc->nama }}</option>
+                                                                {{-- {{ $usersec }} --}}
+                                                                @endforeach
+                                                            </select>
+                                                            <small class="text-disabled">Data yang dikirim: {{ $security->nik }} - {{ $security->nama }}</small>
+                                                        </div>
+
+                                                        {{-- <label for="keterangan">Data Diri Security</label> --}}
+                                                        {{-- <div class="form-group">
+                                                            <textarea class="form-control" name="keterangan" id="keterangan" cols="10" rows="5">{{ $security->keterangan }}</textarea>
+                                                        </div> --}}
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button onclick="event.preventDefault();document.getElementById('editform{{ $security->id }}').submit();" type="submit" class="btn btn-warning">Update</button>
+                                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             @endforeach
                         </tbody>
                     </table>

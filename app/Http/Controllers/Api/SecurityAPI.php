@@ -38,25 +38,41 @@ class SecurityAPI extends Controller
             'keterangan' => $keterangan
         ];
     }
+    public function updateQrScan(Request $request, $id)
+    {
+        $security = Security::find($id);
+        $usersecurity = UserSecurity::where('nik', $request->nik)->first();
+        $kodeunik = PointQR::where('kodeunik', $security->kodeunik)->first();
+        $result = $this->checkRadius($kodeunik->latitude, $kodeunik->longitude, $security->latitude, $security->longitude);
+        $security->nik = $usersecurity->nik;
+        $security->nama = $usersecurity->nama;
+        $security->keterangan = $result['keterangan'];
+        if ($result['keterangan'] == 'dalam radius 30m') {
+            $security->status = 'valid';
+        }
+        $security->save();
+        // dd($data['invalid']);
+        return redirect()->back()->with('success', 'Data Berhasil Diedit');
+    }
     public function checkUser($nikapi, $namaapi) {
         $user = UserSecurity::where('nik', $nikapi)->first();
         // Jika user tidak ditemukan
         if (!$user) {
             return[
                 'status' => 'error',
-                'keterangan' => 'NIK tidak cocok mohon diedit',
+                'keterangan' => 'NIK tidak cocok dengan data security',
             ];
         }
         if ($user->nama !== $namaapi) {
             return[
                 'status' => 'error',
-                'keterangan' => 'Nama tidak cocok mohon diedit',
+                'keterangan' => 'Nama tidak cocok dengan data security',
             ];
         }
         if ($user->nama !== $namaapi && $user->nik !== $namaapi) {
             return[
                 'status' => 'error',
-                'keterangan' => 'Nama dan NIK tidak cocok mohon diedit',
+                'keterangan' => 'Nama dan NIK tidak cocok dengan data security',
             ];
         }
         else {
@@ -76,12 +92,17 @@ class SecurityAPI extends Controller
             'nama' => $request->nama,
             'nik' => $request->nik,
             'kodeunik' => $kodeunik->kodeunik,
-            'keterangan' => $result['keterangan'].''.$cekuser['keterangan'],
+            'keterangan' => $result['keterangan'].', '.$cekuser['keterangan'],
             'jarak' => round($result['distance']),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ]);
         return new SecurityResourceAPI($security);
+    }
+    public function deleteQrScan($id) {
+        $security = Security::find($id);
+        $security->delete();
+        return redirect()->back()->with('success', 'Data Berhasil Dihapus');
     }
 
 
